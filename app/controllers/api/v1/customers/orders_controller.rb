@@ -4,7 +4,7 @@ module Api
 		module Customers
 			class OrdersController < ApplicationController
         def index
-          if customer_id.present?
+          if params[:customer_id]
             @orders = Order.where(customer_id: params[:customer_id])
           else
             @orders = Order.all
