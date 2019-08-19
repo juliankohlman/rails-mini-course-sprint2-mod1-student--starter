@@ -3,17 +3,40 @@ module Api
 	module V1
 		module Customers
 			class OrdersController < ApplicationController
-				def index
-					@orders = Order.where(customer_id: params[:customer_id])
-
+        def index
+          if customer_id.present?
+            @orders = Order.where(customer_id: params[:customer_id])
+          else
+            @orders = Order.all
+          end
 					render json: @orders
         end
         
-        # def create
-        #   @order = Order.new(params[:order_id])
-        #   @order.save!
-        #   render json: @order
-        # end
+        def create
+          @order = Order.new(customer_id: params[:customer_id])
+          @order[:status] = 'pending'
+
+          render json: @order
+        end
+
+        def show
+          @order = Order.find(params[:order_id])
+
+          render json: @order
+        end
+
+        def ship
+          @order = Order.find(params[:order_id])
+          @order[:status] = 'shipped'
+
+          render json: @order
+        end
+
+        private
+
+        def order_params
+          params.require(:customer_id)
+        end
 			end
 		end
 	end
